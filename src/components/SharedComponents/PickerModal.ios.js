@@ -1,30 +1,40 @@
 import React, { Component, PropTypes } from 'react';
-import { View, Text, Dimensions, Modal, TouchableOpacity, DatePickerIOS } from 'react-native';
+import { View, Text, Dimensions, Modal, TouchableOpacity, Picker } from 'react-native';
+import _ from 'lodash';
 import { COLORS } from '../../data/constants';
 
 const { width } = Dimensions.get('window');
 
-class DatePickerModal extends Component {
+class PickerModal extends Component {
   render() {
     return (
         <Modal
           visible={this.props.visible}
           onRequestClose={this.props.onClose}
         >
-          <View style={styles.datePickerModal}>
+          <View style={styles.pickerModal}>
             <View style={styles.title}>
-              <Text style={styles.titleText}>{this.props.title || 'Reschedule to:'}</Text>
+              <Text style={styles.titleText}>{this.props.title}</Text>
             </View>
-            <DatePickerIOS
-              style={{backgroundColor: 'white'}}
-              mode="datetime"
-              date={this.props.date}
-              onDateChange={this.props.onDateChange}
-            />
+            <Picker
+              style={{backgroundColor: 'white', borderWidth: 1, borderColor: '#ccc' }}
+              selectedValue={this.props.selectedValue}
+              onValueChange={val => this.props.onValueChange(val)}
+            >
+              {
+                _.map(this.props.values, value => (
+                  <Picker.Item
+                    key={value.value}
+                    value={value.value}
+                    label={value.label}
+                  />
+                ))
+              }
+            </Picker>
             <View style={styles.buttonRow}>
               <TouchableOpacity
                 style={[styles.button, styles.okButton]}
-                onPress={this.props.onApplyDate}
+                onPress={this.props.onApplyValue}
               >
                 <Text style={styles.doneButtonText}>Ok</Text>
               </TouchableOpacity>
@@ -42,7 +52,7 @@ class DatePickerModal extends Component {
 }
 
 const styles = {
-  datePickerModal: {
+  pickerModal: {
     flex: 1,
     justifyContent: 'center'
   },
@@ -88,12 +98,14 @@ const styles = {
   },
 };
 
-DatePickerModal.propTypes = {
+PickerModal.propTypes = {
   onClose: PropTypes.func,
-  onDateChange: PropTypes.func,
-  onApplyDate: PropTypes.func,
-  date: PropTypes.object,
-  visible: PropTypes.bool
+  onValueChange: PropTypes.func,
+  onApplyValue: PropTypes.func,
+  selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  values: PropTypes.array,
+  visible: PropTypes.bool,
+  title: PropTypes.string
 };
 
-export default DatePickerModal;
+export default PickerModal;

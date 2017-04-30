@@ -124,7 +124,7 @@ class SingleRotationEdit extends Component {
             <Text style={styles.labelText}>Method:</Text>
           </View>
           <View style={styles.content}>
-            <Picker
+            {/*<Picker
               style={styles.methodPicker}
               selectedValue={this.state.methodId}
               onValueChange={val => this.setState({ methodId: val })}
@@ -141,7 +141,7 @@ class SingleRotationEdit extends Component {
                 );
               }
               )}
-            </Picker>
+            </Picker>*/}
           </View>
         </View>
         <View style={styles.row}>

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import TabView from 'react-native-scrollable-tab-view';
-import PushNotification from '../api/notification';
 
 import Upcoming from './Upcoming';
 import Contacts from './Contacts';
@@ -38,15 +37,15 @@ class MainApp extends Component {
   }
   componentDidMount() {
     const self = this;
-    PushNotification.configure({
-      onNotification: (notification) => {
-        self.props.actions.setNavigationDestination(0, [{ index: 0 }, {
-          title: 'event',
-          index: 1,
-          event: { index: parseInt(notification.id, 10) }
-        }]);
-      }
-    });
+    // PushNotification.configure({
+    //   onNotification: (notification) => {
+    //     self.props.actions.setNavigationDestination(0, [{ index: 0 }, {
+    //       title: 'event',
+    //       index: 1,
+    //       event: { index: parseInt(notification.id, 10) }
+    //     }]);
+    //   }
+    // });
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.hasUnsavedChanges) {

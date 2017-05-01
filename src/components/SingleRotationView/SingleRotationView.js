@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
-import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Dimensions, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
@@ -32,15 +32,25 @@ class SingleRotationView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      showNameInput: false,
       showMethodPicker: false,
       showFrequencyValuePicker: false,
       showFrequencyUnitPicker: false,
       showDatePicker: false,
+      rotationName: props.rotation.name,
       contactMethodValue: props.rotation.contactMethodId,
       frequencyValue: parseInt(props.rotation.every[0], 10),
       frequencyUnit: props.rotation.every[1],
       date: new Date(getTimestampOfNextEvent(props.rotation))
     };
+  }
+  onApplyName() {
+    if (this.state.rotationName === this.props.rotation.name) {
+      return;
+    }
+    const newRotation = _.extend({}, this.props.rotation, { name: this.state.rotationName });
+    this.props.actions.updateRotation(newRotation);
+    this.setState({ showNameInput: false });
   }
   onApplyNewDate() {
     const newRotation = _.extend({}, this.props.rotation, { starting: moment(this.state.date).format(DATE_FORMAT) });
@@ -68,6 +78,40 @@ class SingleRotationView extends Component {
         ? contactMethod.data : '(mailing address)';
       return { value: contactMethod.id, label: `${contactMethod.type} ${label}` };
     });
+    const nameText = (
+      <View style={styles.content}>
+        <Text style={styles.contentText}>
+          {rotation.name}
+        </Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => this.setState({ showNameInput: true })}
+        >
+          <Icon style={styles.editIcon} name={'pencil'} size={18} />
+        </TouchableOpacity>
+      </View>
+    );
+    const nameInput = (
+      <View style={[styles.content, styles.contentInput]}>
+        <TextInput
+          style={styles.nameInput}
+          value={this.state.rotationName}
+          onChangeText={(text) => this.setState({rotationName: text})}
+        />
+        <TouchableOpacity
+          style={styles.okButton}
+          onPress={() => this.onApplyName()}
+        >
+          <Icon style={styles.okIcon} name={'check'} size={18} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => this.setState({ showNameInput: false })}
+        >
+          <Icon style={styles.cancelIcon} name={'times'} size={18} />
+        </TouchableOpacity>
+      </View>
+    );
     return (
       <View style={styles.container}>
         <NavHeader
@@ -79,14 +123,7 @@ class SingleRotationView extends Component {
           <View style={styles.label}>
             <Text style={styles.labelText}>Name:</Text>
           </View>
-          <View style={styles.content}>
-            <View>
-              <Text style={styles.contentText}>{rotation.name}</Text>
-            </View>
-            <TouchableOpacity style={styles.editButton}>
-              <Icon style={styles.editIcon} name={'pencil'} size={18} />
-            </TouchableOpacity>
-          </View>
+          {this.state.showNameInput ? nameInput : nameText}
         </View>
         <View style={styles.row}>
           <View style={styles.label}>
@@ -223,11 +260,36 @@ const styles = {
     borderColor: COLORS.ROTATIONS.PRIMARY,
     borderRadius: 5
   },
+  contentInput: {
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: COLORS.ROTATIONS.PRIMARY
+  },
+  nameInput: {
+    width: width - 150
+  },
   editButton: {
     marginLeft: 10
   },
   editIcon: {
     color: COLORS.ROTATIONS.PRIMARY
+  },
+  okButton: {
+    marginLeft: 20,
+    padding: 5,
+    backgroundColor: COLORS.EVENTS.PRIMARY
+  },
+  okIcon: {
+    color: 'white'
+  },
+  cancelButton: {
+    marginLeft: 20,
+    marginRight: 10,
+    padding: 5,
+    backgroundColor: '#666'
+  },
+  cancelIcon: {
+    color: 'white'
   },
   subContent: {
     marginRight: 10

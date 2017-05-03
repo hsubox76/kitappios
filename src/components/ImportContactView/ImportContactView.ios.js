@@ -8,21 +8,44 @@ import { CONTACT_TYPE, METHOD_TYPE } from '../../data/constants';
 
 const { width } = Dimensions.get('window');
 
-function formatAddress(address) {
-  const fields = [address.street];
-  if (address.city) {
-    fields.push(address.city);
+function formatAddressAsString(address) {
+  const fieldNames = ['street', 'city', 'region', 'postCode', 'country'];
+  return fieldNames
+    .map(fieldName => address[fieldName])
+    .filter(data => data)
+    .join(', ');
+}
+
+function formatAddressForStorage(address) {
+  const fieldNames = ['street', 'city', 'region', 'postCode', 'country'];
+  return fieldNames
+    .map(fieldName => {
+      if (address[fieldName]) {
+        return { fieldName, value: address[fieldName] }
+      }
+      return null;
+    })
+    .filter(data => data);
+}
+
+function formatDisplayName(contact) {
+  const displayString = [];
+  if (contact.givenName) {
+    displayString.push(contact.givenName);
   }
-  if (address.region) {
-    fields.push(address.region);
+  if (contact.middleName) {
+    displayString.push(contact.middleName);
   }
-  if (address.postCode) {
-    fields.push(address.postCode);
+  if (contact.familyName) {
+    displayString.push(contact.familyName);
   }
-  if (address.country) {
-    fields.push(address.country);
+  if (displayString.length === 0 && contact.company) {
+    displayString.push(contact.company);
   }
-  return fields.join(', ');
+  if (displayString.length === 0 && contact.emailAddresses.length > 0) {
+    displayString.push(contact.emailAddresses[0].email);
+  }
+  return displayString.join(' ');
 }
 
 class ImportContactView extends Component {
@@ -75,7 +98,7 @@ class ImportContactView extends Component {
     const contact = this.state.contact;
     const formattedContact = {
       connection: CONTACT_TYPE.PRIMARY,
-      name: `${contact.givenName} ${contact.familyName}`,
+      name: formatDisplayName(contact),
     };
     const contactMethods = [];
     if (contact.phoneNumbers.length > 0) {
@@ -101,7 +124,7 @@ class ImportContactView extends Component {
         contactMethods.push({
           type: METHOD_TYPE.POSTAL,
           id: contactMethods.length,
-          data: formatAddress(postalAddress)
+          data: formatAddressForStorage(postalAddress)
         });
       });
     }
@@ -146,7 +169,7 @@ class ImportContactView extends Component {
         </TouchableOpacity>
         <View style={styles.contactField}>
           <Text style={styles.contactLabel}>name</Text>
-          <Text>{`${contact.givenName} ${contact.familyName}`}</Text>
+          <Text>{formatDisplayName(contact)}</Text>
         </View>
         {contact.phoneNumbers.length > 0 &&
           <View style={styles.contactField}>
@@ -161,7 +184,7 @@ class ImportContactView extends Component {
         {contact.postalAddresses.length > 0 &&
           <View style={styles.contactField}>
             <Text style={styles.contactLabel}>postal</Text>
-            <Text>{contact.postalAddresses[0].label} : {formatAddress(contact.postalAddresses[0])}</Text>
+            <Text>{contact.postalAddresses[0].label} : {formatAddressAsString(contact.postalAddresses[0])}</Text>
           </View>}
       </View>
     );

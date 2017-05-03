@@ -41,7 +41,7 @@ class ContactSearchResultsList extends Component {
               onPress={() => this.props.setContact(result)}
             >
               <View style={styles.displayNameContainer}>
-                <Text>{result.givenName}</Text>
+                <Text>{result.matchName}</Text>
               </View>
               <View style={styles.contactIconsContainer}>
                 {result.phoneNumbers.length > 0 &&

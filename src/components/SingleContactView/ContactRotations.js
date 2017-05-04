@@ -10,6 +10,7 @@ import AddItemButton from '../SharedComponents/AddItemButton';
 
 const ContactRotations = (props) => {
   const contact = props.contact;
+  // Should probably map through props.contact.rotationIds, less to traverse?
   const rotationViews = props.rotations.map((rotation, index) => {
     const contactMethod = _.find(contact.contactMethods,
       currentContactMethod => currentContactMethod.id === rotation.contactMethodId);

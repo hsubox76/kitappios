@@ -15,10 +15,23 @@ import * as Actions from '../../actions';
 const { width } = Dimensions.get('window');
 
 function mapStateToProps(state, ownProps) {
-  const rotation = _.find(state.rotations, { id: ownProps.rotationId });
+  const rotation = ownProps.rotationId === ''
+    ? {
+      name: 'Just say hi',
+      contactMethodId: 0,
+      every: [1, 'weeks'],
+      contactId: ownProps.contactId,
+      starting: moment().add(1, 'weeks').format(DATE_FORMAT)
+    }
+    : _.find(state.rotations, { id: ownProps.rotationId });
+  const contact = _.find(state.contacts, { id: rotation.contactId });
+  if (rotation.contactMethodId === 0) {
+    rotation.contactMethodId = Object.keys(contact.contactMethods)[0];
+  }
   return {
+    isNew: ownProps.rotationId === '',
     rotation,
-    contact: _.find(state.contacts, { id: rotation.contactId })
+    contact
   };
 }
 
@@ -48,25 +61,44 @@ class SingleRotationView extends Component {
     if (this.state.rotationName === this.props.rotation.name) {
       return;
     }
-    const newRotation = _.extend({}, this.props.rotation, { name: this.state.rotationName });
-    this.props.actions.updateRotation(newRotation);
+    if (!this.props.isNew) {
+      const newRotation = _.extend({}, this.props.rotation, { name: this.state.rotationName });
+      this.props.actions.updateRotation(newRotation);
+    }
     this.setState({ showNameInput: false });
   }
   onApplyNewDate() {
-    const newRotation = _.extend({}, this.props.rotation, { starting: moment(this.state.date).format(DATE_FORMAT) });
-    this.props.actions.updateRotation(newRotation);
+    if (!this.props.isNew) {
+      const newRotation = _.extend({}, this.props.rotation, { starting: moment(this.state.date).format(DATE_FORMAT) });
+      this.props.actions.updateRotation(newRotation);
+    }
     this.setState({ showDatePicker: false });
   }
   onApplyContactMethod() {
-    const newRotation = _.extend({}, this.props.rotation, { contactMethodId: this.state.contactMethodValue });
-    this.props.actions.updateRotation(newRotation);
+    if (!this.props.isNew) {
+      const newRotation = _.extend({}, this.props.rotation, { contactMethodId: this.state.contactMethodValue });
+      this.props.actions.updateRotation(newRotation);
+    }
     this.setState({ showMethodPicker: false });
   }
   onApplyFrequency() {
-    const newRotation = _.extend({}, this.props.rotation, {
-      every: [parseInt(this.state.frequencyValue, 10), this.state.frequencyUnit] });
-    this.props.actions.updateRotation(newRotation);
+    if (!this.props.isNew) {
+      const newRotation = _.extend({}, this.props.rotation, {
+        every: [parseInt(this.state.frequencyValue, 10), this.state.frequencyUnit] });
+      this.props.actions.updateRotation(newRotation);
+    }
     this.setState({ showFrequencyUnitPicker: false, showFrequencyValuePicker: false });
+  }
+  onAddRotation() {
+    const rotation = {
+      name: this.state.rotationName,
+      contactMethodId: this.state.contactMethodValue,
+      every: [this.state.frequencyValue, this.state.frequencyUnit],
+      contactId: this.props.contact.id,
+      starting: moment(this.state.date).format(DATE_FORMAT)
+    };
+    this.props.actions.addRotation(rotation);
+    this.props.onBack();
   }
   render() {
     const rotation = this.props.rotation;
@@ -112,6 +144,7 @@ class SingleRotationView extends Component {
         </TouchableOpacity>
       </View>
     );
+    //TODO: Need to be able to delete rotations.
     return (
       <View style={styles.container}>
         <NavHeader
@@ -182,6 +215,16 @@ class SingleRotationView extends Component {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {this.props.isNew && (
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => this.onAddRotation()}
+          >
+            <Text style={styles.addButtonText}>Schedule It!</Text>
+          </TouchableOpacity>
+        )}
+
         <DatePickerModal
           onClose={() => this.setState({ showDatePicker: false })}
           onDateChange={(date) => this.setState({date})}
@@ -226,7 +269,7 @@ SingleRotationView.propTypes = {
   rotation: PropTypes.object,
   contact: PropTypes.object,
   onBack: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired,
+  isNew: PropTypes.bool
 };
 
 const styles = {
@@ -267,6 +310,19 @@ const styles = {
   },
   nameInput: {
     width: width - 150
+  },
+  addButton: {
+    marginLeft: 50,
+    marginTop: 15,
+    height: 30,
+    width: width - 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.ROTATIONS.PRIMARY,
+  },
+  addButtonText: {
+    color: 'white',
+    fontSize: 20
   },
   editButton: {
     marginLeft: 10

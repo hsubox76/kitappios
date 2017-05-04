@@ -94,7 +94,7 @@ class ContactsComponent extends Component {
                   onEdit={(contactId) =>
                     navigator.push({ title: 'Edit Contact', index: 6, contactId })}
                   onNewRotationPress={() =>
-                    navigator.push({ title: 'Add Schedule', index: 7, contactId: route.contactId })}
+                    navigator.push({ title: 'Add Schedule', index: 7, rotationId: '', contactId: route.contactId })}
                   onRotationPress={(rotation) =>
                     navigator.push({ title: rotation.name, index: 4, rotationId: rotation.id })}
                 />);
@@ -115,8 +115,6 @@ class ContactsComponent extends Component {
               return (
                 <SingleRotationView
                   onBack={() => navigator.pop()}
-                  onEdit={(rotationId) =>
-                    navigator.push({ title: 'edit schedule', index: 5, rotationId })}
                   rotationId={route.rotationId}
                 />
               );
@@ -142,10 +140,10 @@ class ContactsComponent extends Component {
             } else if (route.index === 7) {
               // add new rotation
               return (
-                <SingleRotationEdit
-                  contactId={route.contactId}
+                <SingleRotationView
                   onBack={() => navigator.pop()}
-                  onSaveRotation={(rotation) => props.actions.addRotation(rotation)}
+                  rotationId={route.rotationId}
+                  contactId={route.contactId}
                 />
               );
             }

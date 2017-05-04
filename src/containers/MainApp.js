@@ -54,7 +54,6 @@ class MainApp extends Component {
   }
   render() {
     const pageIndex = !_.isUndefined(this.props.desiredPageIndex) ? this.props.desiredPageIndex : null;
-    // console.warn(pageIndex);
     const self = this;
     return (
       <TabView

@@ -16,8 +16,14 @@ function formatEventList(rotations, contacts, events) {
   return _(events)
   .map((event, index) => {
     const rotation = _.find(rotations, rot => rot.id === event.rotationId);
+    if (!rotation) {
+      return null;
+    }
     const contact = _.find(contacts,
       (con) => con.id === rotation.contactId);
+    if (!contact) {
+      return null;
+    }
     const contactMethod = _.find(contact.contactMethods,
         cMethod => cMethod.id === rotation.contactMethodId);
     return _.extend({}, event, {
@@ -29,7 +35,7 @@ function formatEventList(rotations, contacts, events) {
       // flag events more than a year from now to format differently
     });
   })
-  .filter(event => event.status !== EVENT_STATUS.CANCELED && event.status !== EVENT_STATUS.DONE)
+  .filter(event => event && event.status !== EVENT_STATUS.CANCELED && event.status !== EVENT_STATUS.DONE)
   .sortBy('timestamp')
   .value();
 }

@@ -24,6 +24,12 @@ function mapStateToProps(state, ownProps) {
       starting: moment().add(1, 'weeks').format(DATE_FORMAT)
     }
     : _.find(state.rotations, { id: ownProps.rotationId });
+  if (!rotation) {
+    return {
+      rotation: null,
+      contact: null
+    }
+  }
   const contact = _.find(state.contacts, { id: rotation.contactId });
   if (rotation.contactMethodId === 0) {
     rotation.contactMethodId = Object.keys(contact.contactMethods)[0];
@@ -45,6 +51,7 @@ class SingleRotationView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isDeleting: false,
       showNameInput: false,
       showMethodPicker: false,
       showFrequencyValuePicker: false,
@@ -102,6 +109,9 @@ class SingleRotationView extends Component {
   }
   render() {
     const rotation = this.props.rotation;
+    if (!rotation) {
+      return <View><Text>deleting</Text></View>
+    }
     const contact = this.props.contact;
     const method = contact.contactMethods[rotation.contactMethodId];
     const methodData = _.isString(method.data) ? method.data : '(mailing address)';
@@ -144,12 +154,25 @@ class SingleRotationView extends Component {
         </TouchableOpacity>
       </View>
     );
-    //TODO: Need to be able to delete rotations.
+    let onDelete = null;
+    if (!this.props.isNew) {
+      onDelete = () => {
+        this.setState({ isDeleting: true });
+        this.props.actions.deleteRotation(this.props.rotation).then(() => {
+          this.props.onBack();
+          this.setState({ isDeleting: false });
+        });
+      };
+    }
+    if (this.state.isDeleting) {
+      return <View><Text>deleting</Text></View>
+    }
     return (
       <View style={styles.container}>
         <NavHeader
           title="Schedule"
           onBack={this.props.onBack}
+          onDelete={onDelete}
           color={COLORS.ROTATIONS.PRIMARY}
         />
         <View style={styles.row}>

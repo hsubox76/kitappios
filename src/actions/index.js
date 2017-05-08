@@ -302,12 +302,13 @@ export function addRotation(rotation) {
   return (dispatch, getStore) => {
     const { user } = getStore();
     const newRotationKey = firebaseApp.database().ref(`users/${user.uid}/rotations`).push().key;
-    return firebaseApp.database().ref(`users/${user.uid}/rotations/${newRotationKey}`)
-      .set(_.extend({}, rotation, {
+    const newRotation = _.extend({}, rotation, {
         id: newRotationKey
-      }))
+      });
+    return firebaseApp.database().ref(`users/${user.uid}/rotations/${newRotationKey}`)
+      .set(newRotation)
       .then(() => updateTimestamp(user.uid, 'rotations'))
-      .then(() => dispatch(generateEventsForRotation(rotation, 'new')));
+      .then(() => dispatch(generateEventsForRotation(newRotation, 'new')));
   };
 }
 
@@ -321,6 +322,31 @@ export function updateRotation(rotation) {
       // if you modify a rotation, all dates are out the window
       // this should probably be fine tuned so name & method changes don't trigger this
       .then(() => dispatch(generateEventsForRotation(rotation, 'new')));
+  };
+}
+
+export function deleteRotation(rotation) {
+  return (dispatch, getStore) => {
+    const { user, events, contacts } = getStore();
+    const contact = _.find(contacts, { id: rotation.contactId });
+    console.warn(JSON.stringify(contact));
+    return firebaseApp.database()
+      .ref(`users/${user.uid}/rotations/${rotation.id}`)
+      .remove()
+      .then(() => updateTimestamp(user.uid, 'rotations'))
+      // delete from contact
+      .then(() => {
+        return firebaseApp.database()
+          .ref(`users/${user.uid}/contacts/${rotation.contactId}`)
+          .set(_.extend({}, contact, { rotationIds: contact.rotationIds.filter(id => id !== rotation.id) }));
+      })
+      // delete from events
+      .then(() => {
+        return firebaseApp.database()
+          .ref(`users/${user.uid}/events`)
+          .set(_.filter(events, event => event.rotationId !== rotation.id));
+      })
+      .then(() => updateTimestamp(user.uid, 'events'));
   };
 }
 

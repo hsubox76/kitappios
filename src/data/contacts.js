@@ -52,7 +52,7 @@ export const contacts = {
     name: 'Kevin',
     connection: CONTACT_TYPE.PRIMARY,
     birthdate: '07-07-1979',
-    rotationsIds: [3],
+    rotationIds: [3],
     contactMethods: {
       cm_a: {
         id: 'cm_a',
@@ -70,7 +70,7 @@ export const contacts = {
     name: 'Nathalie',
     connection: CONTACT_TYPE.PRIMARY,
     birthdate: '12-07-1980',
-    rotationsIds: [4],
+    rotationIds: [4],
     contactMethods: {
       cm_a: {
         id: 'cm_a',

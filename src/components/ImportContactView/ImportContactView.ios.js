@@ -247,6 +247,7 @@ const styles = {
   },
   searchContainer: {
     marginLeft: 10,
+    height: 40,
     alignItems: 'center',
     flexDirection: 'row'
   },

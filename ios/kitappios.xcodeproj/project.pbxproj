@@ -47,6 +47,7 @@
 		81C91AF89BBF4F529E1827CD /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B879B0DB020649C9AFA9EB1B /* Zocial.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		B4FE22FD1EB95D6A0058EAE1 /* libRCTContacts.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4FE22E51EB95D4E0058EAE1 /* libRCTContacts.a */; };
+		B4FE233B1EC042690058EAE1 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4FE23381EC041F40058EAE1 /* libRCTPushNotification.a */; };
 		DA9BCDF98B954423860DA859 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBAFDC400D264399B4071847 /* SimpleLineIcons.ttf */; };
 		FFC1D7A4BB0E4F06AA4797AD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECAAC501D8FB4600B920D4A6 /* FontAwesome.ttf */; };
 /* End PBXBuildFile section */
@@ -262,6 +263,20 @@
 			remoteGlobalIDString = 1441618E1BD0A79300FA4F59;
 			remoteInfo = RCTContacts;
 		};
+		B4FE23371EC041F40058EAE1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4FE23321EC041F30058EAE1 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTPushNotification;
+		};
+		B4FE23391EC041F40058EAE1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B4FE23321EC041F30058EAE1 /* RCTPushNotification.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
+			remoteInfo = "RCTPushNotification-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -298,6 +313,8 @@
 		A0E881EAD39C40DF9E88DADD /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		A114264672B849FC81604FFD /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		B4FE22DC1EB95D4E0058EAE1 /* RCTContacts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTContacts.xcodeproj; path = "../node_modules/react-native-contacts/ios/RCTContacts.xcodeproj"; sourceTree = "<group>"; };
+		B4FE230C1EC0414D0058EAE1 /* kitappios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = kitappios.entitlements; path = kitappios/kitappios.entitlements; sourceTree = "<group>"; };
+		B4FE23321EC041F30058EAE1 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "/Users/cholland/personal/kitappios/node_modules/react-native/Libraries/Network/../PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<absolute>"; };
 		B879B0DB020649C9AFA9EB1B /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		C2E5B8DBD90E49998FA74231 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		D9384B36D3164AE695BB2E1B /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
@@ -331,6 +348,7 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				B4FE233B1EC042690058EAE1 /* libRCTPushNotification.a in Frameworks */,
 				1C14108CA38B4E1E993ED6A0 /* libBVLinearGradient.a in Frameworks */,
 				65A86EF46F8A4AFEBE263E1E /* libRNVectorIcons.a in Frameworks */,
 			);
@@ -441,6 +459,7 @@
 		13B07FAE1A68108700A75B9A /* kitappios */ = {
 			isa = PBXGroup;
 			children = (
+				B4FE230C1EC0414D0058EAE1 /* kitappios.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -505,6 +524,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				B4FE23321EC041F30058EAE1 /* RCTPushNotification.xcodeproj */,
 				B4FE22DC1EB95D4E0058EAE1 /* RCTContacts.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -576,6 +596,15 @@
 			isa = PBXGroup;
 			children = (
 				B4FE22E51EB95D4E0058EAE1 /* libRCTContacts.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B4FE23331EC041F30058EAE1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B4FE23381EC041F40058EAE1 /* libRCTPushNotification.a */,
+				B4FE233A1EC041F40058EAE1 /* libRCTPushNotification-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -671,6 +700,11 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 7RH8G97E23;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -728,6 +762,10 @@
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
+				},
+				{
+					ProductGroup = B4FE23331EC041F30058EAE1 /* Products */;
+					ProjectRef = B4FE23321EC041F30058EAE1 /* RCTPushNotification.xcodeproj */;
 				},
 				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
@@ -961,6 +999,20 @@
 			remoteRef = B4FE22E41EB95D4E0058EAE1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		B4FE23381EC041F40058EAE1 /* libRCTPushNotification.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTPushNotification.a;
+			remoteRef = B4FE23371EC041F40058EAE1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B4FE233A1EC041F40058EAE1 /* libRCTPushNotification-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRCTPushNotification-tvOS.a";
+			remoteRef = B4FE23391EC041F40058EAE1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1154,6 +1206,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = kitappios/kitappios.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 7RH8G97E23;
@@ -1173,6 +1226,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = kitappios/kitappios.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7RH8G97E23;
 				INFOPLIST_FILE = kitappios/Info.plist;
@@ -1339,6 +1393,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1374,6 +1429,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS/**";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;

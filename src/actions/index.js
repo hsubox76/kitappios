@@ -1,7 +1,7 @@
 import { ACTIONS } from './types';
 import * as Storage from '../data/storage';
 import firebaseApp from '../api/firebase';
-import pushNotification from '../api/notification';
+import { PushNotificationIOS } from 'react-native';
 import _ from 'lodash';
 import moment from 'moment';
 import { Alert } from 'react-native';
@@ -405,11 +405,11 @@ function scheduleNotificationsForAllEvents(events) {
       const eventName = `${rotation.name} (${contact.name})`;
       // I should notify on past-due events too, but differently?
       if (event.timestamp >= moment()) {
-        pushNotification.localNotificationSchedule({
-          id: `00${index}`,
-          message: eventName,
-          date: new Date(event.timestamp)
-        });
+        // pushNotification.localNotificationSchedule({
+        //   id: `00${index}`,
+        //   message: eventName,
+        //   date: new Date(event.timestamp)
+        // });
       }
     });
   };
@@ -473,9 +473,9 @@ export function setEventTimestamp(event, timestamp) {
 
 export function schedulePushNotification() {
   return (dispatch) => {
-    pushNotification.localNotificationSchedule({
-      message: 'Notification message!',
-      date: new Date(Date.now() + 1000)
+    PushNotificationIOS.scheduleLocalNotification({
+      fireDate: new Date(Date.now() + 5000).getTime(),
+      alertBody: 'Notification message!'
     });
     // save state that event has been scheduled
   };

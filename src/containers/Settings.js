@@ -17,7 +17,7 @@ function mapDispatchToActions(dispatch) {
 
 class Settings extends Component {
   componentWillMount() {
-    PushNotificationIOS.addEventListener('register', this._onRegistered);
+    // PushNotificationIOS.addEventListener('register', this._onRegistered);
     PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
     PushNotificationIOS.addEventListener('notification', this._onRemoteNotification);
     PushNotificationIOS.addEventListener('localNotification', this._onLocalNotification);
@@ -26,7 +26,7 @@ class Settings extends Component {
   }
 
   componentWillUnmount() {
-    PushNotificationIOS.removeEventListener('register', this._onRegistered);
+    // PushNotificationIOS.removeEventListener('register', this._onRegistered);
     PushNotificationIOS.removeEventListener('registrationError', this._onRegistrationError);
     PushNotificationIOS.removeEventListener('notification', this._onRemoteNotification);
     PushNotificationIOS.removeEventListener('localNotification', this._onLocalNotification);
@@ -103,7 +103,7 @@ class Settings extends Component {
         <Button onPress={this.props.actions.resetToTestData}>
           reset to test data
         </Button>
-        <Button onPress={this._sendNotification}>
+        <Button onPress={this.props.actions.schedulePushNotification}>
           send push notification
         </Button>
         <Button onPress={() => this.props.actions.setNavigationDestination(0, [{ index: 0 }, {

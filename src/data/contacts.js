@@ -61,8 +61,8 @@ export const contacts = {
       },
     },
     family: [
-      { id: 'c', type: FAM_TYPE.PARTNER, title: 'husband' },
-      { id: 'd', type: FAM_TYPE.CHILD, title: 'kid' }
+      { id: 'c', type: FAM_TYPE.PARTNER, title: 'wife' },
+      { id: 'd', type: FAM_TYPE.CHILD, title: 'son' }
     ]
   },
   c: {
@@ -80,7 +80,7 @@ export const contacts = {
     },
     family: [
       { id: 'b', type: FAM_TYPE.PARTNER, title: 'husband' },
-      { id: 'd', type: FAM_TYPE.CHILD, title: 'kid' }
+      { id: 'd', type: FAM_TYPE.CHILD, title: 'son' }
     ]
   },
   d: {

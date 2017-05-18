@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { View, ListView, Dimensions } from 'react-native';
+import { View, Text, ListView, Dimensions } from 'react-native';
 import EventBox from './EventBox';
 import EventListHeader from './EventListHeader';
 
@@ -24,6 +24,7 @@ class EventList extends Component {
         style={styles.listContainer}
         dataSource={this.state.dataSource}
         enableEmptySections
+        removeClippedSubviews={!this.props.fromNavigator}
         renderHeader={() =>
           (<EventListHeader />)}
         renderRow={(event) => <EventBox key={event.id} event={event} onPress={this.props.onEventPress} />}
@@ -36,6 +37,7 @@ class EventList extends Component {
 EventList.propTypes = {
   events: PropTypes.array.isRequired,
   onEventPress: PropTypes.func,
+  fromNavigator: PropTypes.bool
 };
 
 const styles = {

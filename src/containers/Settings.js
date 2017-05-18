@@ -18,18 +18,18 @@ function mapDispatchToActions(dispatch) {
 class Settings extends Component {
   componentWillMount() {
     // PushNotificationIOS.addEventListener('register', this._onRegistered);
-    PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
-    PushNotificationIOS.addEventListener('notification', this._onRemoteNotification);
-    PushNotificationIOS.addEventListener('localNotification', this._onLocalNotification);
+    // PushNotificationIOS.addEventListener('registrationError', this._onRegistrationError);
+    // PushNotificationIOS.addEventListener('notification', this._onRemoteNotification);
+    // PushNotificationIOS.addEventListener('localNotification', this._onLocalNotification);
 
-    PushNotificationIOS.requestPermissions();
+    // PushNotificationIOS.requestPermissions();
   }
 
   componentWillUnmount() {
     // PushNotificationIOS.removeEventListener('register', this._onRegistered);
-    PushNotificationIOS.removeEventListener('registrationError', this._onRegistrationError);
-    PushNotificationIOS.removeEventListener('notification', this._onRemoteNotification);
-    PushNotificationIOS.removeEventListener('localNotification', this._onLocalNotification);
+    // PushNotificationIOS.removeEventListener('registrationError', this._onRegistrationError);
+    // PushNotificationIOS.removeEventListener('notification', this._onRemoteNotification);
+    // PushNotificationIOS.removeEventListener('localNotification', this._onLocalNotification);
   }
   _sendNotification() {
     require('RCTDeviceEventEmitter').emit('remoteNotificationReceived', {
@@ -106,7 +106,7 @@ class Settings extends Component {
         <Button onPress={this.props.actions.schedulePushNotification}>
           send push notification
         </Button>
-        <Button onPress={() => this.props.actions.setNavigationDestination(0, [{ index: 0 }, {
+        <Button onPress={() => this.props.actions.setNavigationDestination(0, [{ index: 0, from: 'navigator' }, {
           title: 'event',
           index: 1,
           event: { index: 0 }

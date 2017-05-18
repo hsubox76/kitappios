@@ -8,10 +8,14 @@ export default function ui(state = {}, action) {
     case ACTIONS.SET_PAGE_INDEX:
       return Object.assign({}, state, { currentPageIndex: action.payload.index });
     case ACTIONS.SET_NAVIGATION_DESTINATION:
-      return Object.assign({}, state, {
-        desiredPageIndex: action.payload.index,
-        desiredNavigationStack: action.payload.stack
-      });
+      const newState = {};
+      if (!_.isUndefined(action.payload.index)) {
+        newState.desiredPageIndex = action.payload.index;
+      }
+      if (!_.isUndefined(action.payload.stack)) {
+        newState.desiredNavigationStack = action.payload.stack;
+      }
+      return Object.assign({}, state, newState);
     case ACTIONS.SET_STORE:
     case ACTIONS.SET_LAST_UPDATED:
       return Object.assign({}, state, {

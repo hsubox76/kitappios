@@ -398,18 +398,19 @@ export function generateEventsForRotation(rotation, mode = 'new') {
 function scheduleNotificationsForAllEvents(events) {
   return (dispatch, getStore) => {
     const { rotations, contacts } = getStore();
-    pushNotification.cancelAllLocalNotifications();
+    PushNotificationIOS.cancelAllLocalNotifications();
     _.forEach(events, (event, index) => {
       const rotation = rotations[event.rotationId];
       const contact = contacts[rotation.contactId];
       const eventName = `${rotation.name} (${contact.name})`;
       // I should notify on past-due events too, but differently?
       if (event.timestamp >= moment()) {
-        // pushNotification.localNotificationSchedule({
-        //   id: `00${index}`,
-        //   message: eventName,
-        //   date: new Date(event.timestamp)
-        // });
+        console.warn('scheduling for', event.timestamp);
+        PushNotificationIOS.scheduleLocalNotification({
+          fireDate: new Date(event.timestamp).getTime(),
+          alertBody: eventName,
+          userInfo: { id: index }
+        });
       }
     });
   };
@@ -430,11 +431,11 @@ export function generateAllEvents(mode = 'new') {
         .set(mergedEvents)
         .then(() => updateTimestamp(user.uid, 'events'))
         .then(() => {
-          // dispatch(scheduleNotificationsForAllEvents(mergedEvents));
+          dispatch(scheduleNotificationsForAllEvents(mergedEvents));
         });
     } else {
-      // dispatch(scheduleNotificationsForAllEvents(events));
-      // updateTimestamp(user.uid, 'events');
+      dispatch(scheduleNotificationsForAllEvents(events));
+      updateTimestamp(user.uid, 'events');
       return Promise.resolve();
     }
   };
@@ -475,7 +476,8 @@ export function schedulePushNotification() {
   return (dispatch) => {
     PushNotificationIOS.scheduleLocalNotification({
       fireDate: new Date(Date.now() + 5000).getTime(),
-      alertBody: 'Notification message!'
+      alertBody: 'Notification message!',
+      userInfo: { id: 5 }
     });
     // save state that event has been scheduled
   };

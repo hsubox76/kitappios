@@ -72,7 +72,7 @@ class UpcomingComponent extends Component {
     if (nextProps.currentPageIndex !== this.props.currentPageIndex && nextProps.currentPageIndex !== 0) {
       this._navigator.popToTop();
     }
-    if (nextProps.desiredNavigationStack) {
+    if (!this.props.desiredNavigationStack && nextProps.desiredNavigationStack) {
       this._navigator.immediatelyResetRouteStack(nextProps.desiredNavigationStack);
       // this.props.actions.setNavigationDestination(null, null);
     }
@@ -95,6 +95,7 @@ class UpcomingComponent extends Component {
               return (
                 <EventList
                   events={this.props.events}
+                  fromNavigator={route.from === 'navigator'}
                   onEventPress={(event) => navigator.push({ title: 'event', index: 1, event })}
                 />
               );

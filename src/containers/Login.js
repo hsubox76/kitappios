@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import LinearGradient from 'react-native-linear-gradient';
-import { View, Text, TextInput, TouchableOpacity,
+import { View, KeyboardAvoidingView, Text, TextInput, TouchableOpacity,
   ActivityIndicator, Dimensions, Alert } from 'react-native';
 import Button from 'apsl-react-native-button';
 import * as Actions from '../actions';
@@ -31,14 +31,10 @@ class Login extends Component {
       email: '',
       password: '',
       passwordConfirm: '',
-      mode: 'login'
+      mode: null
     };
   }
   onCreateAccount() {
-    if (this.state.password !== this.state.passwordConfirm) {
-      Alert.alert('Password Error', 'Passwords don\'t match.');
-      return;
-    }
     this.props.actions.createAccountWithEmail(this.state.email, this.state.password);
   }
   onToggleMode(mode) {
@@ -50,7 +46,7 @@ class Login extends Component {
     });
   }
   render() {
-    const logo = <Text style={styles.logoText}>K.I.T.</Text>;
+    const logo = <View style={styles.logo}><Text style={styles.logoText}>K.I.T.</Text></View>;
     if (!this.props.authChecked) {
       return (
         <LinearGradient
@@ -62,30 +58,7 @@ class Login extends Component {
         </LinearGradient>
       );
     }
-    const loginButtonStyle =
-      [styles.toggleButton, styles.loginToggle,
-        this.state.mode === 'login' ? styles.selectedToggle : {}];
-    const createButtonStyle =
-      [styles.toggleButton, styles.createToggle,
-        this.state.mode === 'create' ? styles.selectedToggle : {}];
-    const loginTextStyle =
-      [styles.toggleButtonText, this.state.mode === 'login' ? styles.selectedToggleText : {}];
-    const createTextStyle =
-      [styles.toggleButtonText, this.state.mode === 'create' ? styles.selectedToggleText : {}];
-    const passwordConfirmBox = this.state.mode === 'create' && (
-      <View style={styles.loginRow}>
-        <Text style={styles.labelText}>confirm password</Text>
-        <View style={styles.textInputContainer}>
-          <TextInput
-            style={styles.textInput}
-            value={this.state.passwordConfirm}
-            onChangeText={text => this.setState({ passwordConfirm: text })}
-            secureTextEntry
-          />
-        </View>
-      </View>
-    );
-    const loginButton = this.state.mode === 'login' && (
+    const loginButton = (
       <Button
         style={styles.button}
         textStyle={styles.buttonText}
@@ -94,62 +67,89 @@ class Login extends Component {
         login
       </Button>
     );
-    const createButton = this.state.mode === 'create' && (
+    const createButton = (
       <Button
         style={styles.button}
         textStyle={styles.buttonText}
         onPress={() => this.onCreateAccount()}
       >
-        create an account
+        create account
       </Button>
     );
+    if (!this.state.mode) {
+      return (
+        <LinearGradient
+          colors={[COLORS.CONTACTS.PRIMARY, COLORS.CONTACTS.SECONDARY]}
+          style={styles.container}
+        >
+          {logo}
+          <View style={styles.entryButtons}>
+            <Button
+              style={styles.button}
+              textStyle={styles.buttonText}
+              onPress={() => this.setState({ mode: 'login' })}
+            >
+              login
+            </Button>
+            <Button
+              style={styles.button}
+              textStyle={styles.buttonText}
+              onPress={() => this.setState({ mode: 'create' })}
+            >
+              create a new account
+            </Button>
+          </View>
+        </LinearGradient>
+      );
+    }
     return (
       <LinearGradient
         colors={[COLORS.CONTACTS.PRIMARY, COLORS.CONTACTS.SECONDARY]}
         style={styles.container}
       >
-        {logo}
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity
-            style={loginButtonStyle}
-            onPress={() => this.onToggleMode('login')}
-          >
-            <Text style={loginTextStyle}>log in</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={createButtonStyle}
-            onPress={() => this.onToggleMode('create')}
-          >
-            <Text style={createTextStyle}>sign up</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.loginContainer}>
-          <View style={styles.loginRow}>
-            <Text style={styles.labelText}>email</Text>
-            <View style={styles.textInputContainer}>
-              <TextInput
-                style={styles.textInput}
-                placeholder="pat@example.com"
-                value={this.state.email}
-                onChangeText={text => this.setState({ email: text })}
-              />
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+          {logo}
+          <View style={styles.loginContainer}>
+            <View style={styles.loginRow}>
+              <Text style={styles.labelText}>email</Text>
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="pat@example.com"
+                  value={this.state.email}
+                  onChangeText={text => this.setState({ email: text })}
+                />
+              </View>
+            </View>
+            <View style={styles.loginRow}>
+              <Text style={styles.labelText}>password</Text>
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  style={styles.textInput}
+                  value={this.state.password}
+                  onChangeText={text => this.setState({ password: text })}
+                  secureTextEntry={true}
+                />
+              </View>
             </View>
           </View>
-          <View style={styles.loginRow}>
-            <Text style={styles.labelText}>password</Text>
-            <View style={styles.textInputContainer}>
-              <TextInput
-                style={styles.textInput}
-                value={this.state.password}
-                onChangeText={text => this.setState({ password: text })}
-                secureTextEntry
-              />
-            </View>
+          <View style={styles.loginActionButtons}>
+            {this.state.mode === 'login' && loginButton}
+            {this.state.mode === 'create' && createButton}
+            <Button
+              style={[styles.button, styles.cancelButton]}
+              textStyle={styles.buttonText}
+              onPress={() => this.setState({
+                mode: null,
+                email: '',
+                password: '',
+                passwordConfirm: ''
+              })}
+            >
+              cancel
+            </Button>
           </View>
-          {passwordConfirmBox}
-        </View>
-        {loginButton}
-        {createButton}
+        </KeyboardAvoidingView>
       </LinearGradient>
     );
   }
@@ -172,6 +172,7 @@ const styles = {
     fontSize: 72
   },
   button: {
+    flex: 1,
     borderWidth: 2,
     borderColor: 'white',
     marginHorizontal: 10,
@@ -180,47 +181,6 @@ const styles = {
   buttonText: {
     color: 'white',
     backgroundColor: 'transparent',
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    borderBottomColor: 'white',
-    borderBottomWidth: 2,
-    width: width - 20,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    marginBottom: 15,
-    backgroundColor: 'transparent'
-  },
-  toggleButton: {
-    borderWidth: 2,
-    borderColor: 'white',
-    borderBottomWidth: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)'
-  },
-  // loginToggle: {
-  //   borderTopLeftRadius: 10,
-  // },
-  // createToggle: {
-  //   borderTopRightRadius: 10
-  // },
-  selectedToggle: {
-    backgroundColor: COLORS.CONTACTS.PRIMARY
-  },
-  selectedToggleText: {
-    color: 'white',
-    backgroundColor: 'transparent',
-    fontWeight: 'bold',
-    fontSize: 18
-  },
-  toggleButtonText: {
-    color: 'white',
-    fontSize: 16
-  },
-  loginContainer: {
-
   },
   loginRow: {
     width: width - 20,
@@ -236,7 +196,7 @@ const styles = {
   },
   textInputContainer: {
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 5,
     paddingHorizontal: 10,
     width: width - 20
   },
@@ -244,7 +204,18 @@ const styles = {
     color: '#333',
     fontSize: 18,
     width: 300,
-    height: 30
+    height: 40
+  },
+  entryButtons: {
+    height: 150,
+    width: width - 20
+  },
+  loginActionButtons: {
+    width: width - 20,
+    flexDirection: 'row'
+  },
+  cancelButton: {
+    backgroundColor: 'rgba(100, 100, 100, 0.55)'
   }
 };
 

@@ -405,7 +405,6 @@ function scheduleNotificationsForAllEvents(events) {
       const eventName = `${rotation.name} (${contact.name})`;
       // I should notify on past-due events too, but differently?
       if (event.timestamp >= moment()) {
-        console.warn('scheduling for', event.timestamp);
         PushNotificationIOS.scheduleLocalNotification({
           fireDate: new Date(event.timestamp).getTime(),
           alertBody: eventName,

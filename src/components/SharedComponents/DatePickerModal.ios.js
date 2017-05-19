@@ -17,7 +17,7 @@ class DatePickerModal extends Component {
             </View>
             <DatePickerIOS
               style={{backgroundColor: 'white'}}
-              mode="datetime"
+              mode={this.props.mode}
               date={this.props.date}
               onDateChange={this.props.onDateChange}
             />
@@ -93,7 +93,12 @@ DatePickerModal.propTypes = {
   onDateChange: PropTypes.func,
   onApplyDate: PropTypes.func,
   date: PropTypes.object,
-  visible: PropTypes.bool
+  visible: PropTypes.bool,
+  mode: PropTypes.string
+};
+
+DatePickerModal.defaultProps = {
+  mode: 'datetime'
 };
 
 export default DatePickerModal;

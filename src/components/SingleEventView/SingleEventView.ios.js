@@ -190,7 +190,10 @@ class SingleEventView extends Component {
             <Text style={styles.doneButtonText}>Done!</Text>
           </TouchableOpacity>
         </View>
-        <FamilyView contactId={this.props.event.contact.id} familyIds={event.family} />
+        <FamilyView
+          contactId={this.props.event.contact.id}
+          familyIds={event.family}
+        />
         <DatePickerModal
           onClose={() => this.setState({ showDatePicker: false })}
           onDateChange={(date) => this.setState({date})}

@@ -60,10 +60,12 @@ class FamilyView extends Component {
         </View>
         <View>
           {familyDisplay}
-          <AddItemButton
-            text="add family member"
-            onPress={() => this.setState({ familyEditModalOpen: true })}
-          />
+          {this.props.editable && (
+            <AddItemButton
+              text="add family member"
+              onPress={() => this.setState({ familyEditModalOpen: true })}
+            />
+          )}
         </View>
         {familyEditModal}
       </View>

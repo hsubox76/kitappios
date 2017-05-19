@@ -5,6 +5,7 @@ import { Modal, View, Text, Picker, TextInput, Dimensions,
 import _ from 'lodash';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DatePickerModal from '../SharedComponents/DatePickerModal';
 import { COLORS, CONTACT_TYPE } from '../../data/constants';
 
 const { width } = Dimensions.get('window');
@@ -18,6 +19,7 @@ class FamilyEditModal extends Component {
     super(props);
     if (props.person) {
       this.state = {
+        showDatePicker: false,
         selectedId: props.person.id,
         isPrimary: props.person.connection === CONTACT_TYPE.PRIMARY,
         name: props.person.name,
@@ -26,19 +28,27 @@ class FamilyEditModal extends Component {
       };
     } else {
       this.state = {
+        showDatePicker: false,
         isPrimary: true,
         name: '',
         title: '',
-        selectedId: _.find(props.contacts, contact => contact).id
+        selectedId: 'none'
       };
     }
   }
   onSelectContact(id) {
-    const contact = this.props.contacts[id];
-    this.setState({
-      selectedId: id,
-      birthdate: contact.birthdate ? moment(contact.birthdate, 'MM-DD-YYYY') : null
-    });
+    if (id === 'none') {
+      this.setState({
+        selectedId: 'none',
+        birthdate: null
+      });
+    } else {
+      const contact = this.props.contacts[id];
+      this.setState({
+        selectedId: id,
+        birthdate: contact.birthdate ? moment(contact.birthdate, 'MM-DD-YYYY') : null
+      });
+    }
   }
   onOkClick() {
     const props = this.props;
@@ -52,15 +62,17 @@ class FamilyEditModal extends Component {
       }
       newPerson.title = this.state.title;
     } else {
-      // if new
-      // send a flag to let the action know this is new
-      newPerson.new = true;
       if (this.state.isPrimary) {
         const contact = props.contacts[this.state.selectedId];
         newPerson.id = contact.id;
         newPerson.name = contact.name;
+        newPerson.connection = CONTACT_TYPE.PRIMARY;
       } else {
+        // if new
+        // send a flag to let the action know this is new
+        newPerson.new = true;
         newPerson.name = this.state.name;
+        newPerson.connection = CONTACT_TYPE.SECONDARY;
       }
       newPerson.birthdate = this.state.birthdate ? this.state.birthdate.format('MM-DD-YYYY') : null;
       newPerson.title = this.state.title;
@@ -73,21 +85,8 @@ class FamilyEditModal extends Component {
     });
     props.onRequestClose();
   }
-  openDatePicker() {
-    DatePickerAndroid.open({
-      date: this.state.birthdate ? this.state.birthdate.valueOf() : new Date()
-    })
-    .then(({ action, year, month, day }) => {
-      if (action !== DatePickerAndroid.dismissedAction) {
-        this.setState({
-          birthdate: moment().year(year)
-                          .month(month)
-                          .date(day)
-        });
-      }
-    });
-  }
   render() {
+    const contact = _.find(this.props.contacts, { id: this.props.contactId });
     const picker = (
       <View style={styles.formRow}>
         <View style={styles.label}>
@@ -99,6 +98,7 @@ class FamilyEditModal extends Component {
             selectedValue={this.state.selectedId}
             onValueChange={(val) => this.onSelectContact(val)}
           >
+            <Picker.Item key={'none'} value={'none'} label={'pick a contact'} />
             {_(this.props.contacts)
               .filter(contact => contact.id !== this.props.contactId)
               .map((contact) =>
@@ -114,12 +114,14 @@ class FamilyEditModal extends Component {
         <View style={styles.label}>
           <Text style={styles.labelText}>name</Text>
         </View>
-        <TextInput
-          style={styles.nameInput}
-          value={this.state.name}
-          placeholder="name"
-          onChangeText={(val) => this.setState({ name: val })}
-        />
+        <View style={styles.nameInputContainer}>
+          <TextInput
+            style={styles.nameInput}
+            value={this.state.name}
+            placeholder="name"
+            onChangeText={(val) => this.setState({ name: val })}
+          />
+        </View>
       </View>
     );
     const relationshipRow = (
@@ -127,12 +129,14 @@ class FamilyEditModal extends Component {
         <View style={styles.label}>
           <Text style={styles.labelText}>relationship</Text>
         </View>
-        <TextInput
-          style={styles.nameInput}
-          value={this.state.title}
-          placeholder={'title ("son", "wife")'}
-          onChangeText={val => this.setState({ title: val })}
-        />
+        <View style={styles.nameInputContainer}>
+          <TextInput
+            style={styles.nameInput}
+            value={this.state.title}
+            placeholder={'title ("son", "wife")'}
+            onChangeText={val => this.setState({ title: val })}
+          />
+        </View>
       </View>
     );
     const birthdateRow = (
@@ -146,19 +150,21 @@ class FamilyEditModal extends Component {
             <Text>{this.state.birthdate ? this.state.birthdate.format('LL') : '-'}</Text>
           </View>
           :
-          <TouchableOpacity style={styles.birthdateButton} onPress={() => this.openDatePicker()}>
+          <TouchableOpacity
+            style={styles.birthdateButton}
+            onPress={() => this.setState({ showDatePicker: true })}
+          >
             <Text style={styles.birthdateText}>
-              {this.state.birthdate ? this.state.birthdate.format('LL') : 'choose birthdate'}
+              {this.state.birthdate ? this.state.birthdate.format('LL') : 'choose birthdate (optional)'}
             </Text>
           </TouchableOpacity>
         }
       </View>
     );
-    const selector = (
-      <View style={styles.modeSelectContainer}>
+    const selectExisting = (
         <TouchableHighlight
           style={[styles.modeSelectButton,
-            this.state.isPrimary ? styles.modeSelectButtonSelected : []]}
+            this.state.isPrimary ? [] : styles.modeSelectButtonSelected]}
           onPress={() => this.setState({
             isPrimary: true,
             selectedId: _.find(this.props.contacts, contact => contact).id,
@@ -167,14 +173,18 @@ class FamilyEditModal extends Component {
         >
           <Text
             style={!this.state.isPrimary
-            ? styles.modeSelectText : styles.modeSelectTextSelected}
+              ? styles.modeSelectTextSelected
+              : styles.modeSelectText}
           >
-            select existing
+            {this.state.isPrimary ? 'Pick one of your existing contacts below, or...'
+              : 'click to pick from existing contacts instead'}
           </Text>
         </TouchableHighlight>
+    );
+    const manualEntry = (
         <TouchableHighlight
           style={[styles.modeSelectButton,
-            this.state.isPrimary ? [] : styles.modeSelectButtonSelected]}
+            this.state.isPrimary ? styles.modeSelectButtonSelected : []]}
           onPress={() => this.setState({
             isPrimary: false,
             name: '',
@@ -184,11 +194,18 @@ class FamilyEditModal extends Component {
         >
           <Text
             style={this.state.isPrimary
-            ? styles.modeSelectText : styles.modeSelectTextSelected}
+            ? styles.modeSelectTextSelected : styles.modeSelectText}
           >
-            manual entry
+            {this.state.isPrimary
+                ? 'click to enter a new name instead'
+                : `Enter a new family member for ${contact.name} below, or...`}
           </Text>
         </TouchableHighlight>
+    );
+    const selector = (
+      <View style={styles.modeSelectContainer}>
+        {this.state.isPrimary ? selectExisting : manualEntry}
+        {this.state.isPrimary ? manualEntry : selectExisting}
       </View>
     );
     return (
@@ -224,6 +241,16 @@ class FamilyEditModal extends Component {
             </TouchableOpacity>
           </View>
         </View>
+
+        <DatePickerModal
+          onClose={() => this.setState({ showDatePicker: false })}
+          onDateChange={(date) => this.setState({date})}
+          onApplyDate={() => this.setState({ birthdate: moment(this.state.date), showDatePicker: false })}
+          title="Select contact's birthdate"
+          visible={this.state.showDatePicker}
+          date={this.state.date || new Date()}
+          mode="date"
+        />
       </Modal>
     );
   }
@@ -261,7 +288,7 @@ const styles = {
     justifyContent: 'space-between'
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 24,
     marginLeft: 10,
     color: COLORS.CONTACTS.PRIMARY
   },
@@ -272,23 +299,28 @@ const styles = {
     alignItems: 'center'
   },
   modeSelectContainer: {
+    width: width - 50,
     marginVertical: 10,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between'
   },
   modeSelectButton: {
-    padding: 8,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: COLORS.CONTACTS.SECONDARY
+    margin: 8
   },
   modeSelectButtonSelected: {
-    backgroundColor: COLORS.CONTACTS.SECONDARY
+    margin: 8,
+    padding: 8,
+    borderRadius: 5,
+    backgroundColor: COLORS.CONTACTS.SECONDARY,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   modeSelectText: {
+    fontSize: 20,
     color: COLORS.CONTACTS.SECONDARY
   },
   modeSelectTextSelected: {
+    fontSize: 16,
     color: 'white'
   },
   pickerContainer: {
@@ -297,11 +329,12 @@ const styles = {
     marginVertical: 5
   },
   picker: {
-    width: 200,
+    width: 200
   },
   formRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 10
   },
   nonTextRow: {
     marginVertical: 10
@@ -313,9 +346,17 @@ const styles = {
     fontSize: 14,
     color: COLORS.CONTACTS.PRIMARY
   },
+  nameInputContainer: {
+    height: 40,
+    borderColor: COLORS.CONTACTS.PRIMARY,
+    borderWidth: 2,
+    justifyContent: 'center',
+    padding: 5
+  },
   nameInput: {
+    height: 30,
     width: width * 0.75 - 80,
-    fontSize: 16
+    fontSize: 18
   },
   birthdateButton: {
     borderWidth: 1,

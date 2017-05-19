@@ -48,7 +48,9 @@ class ContactsComponent extends Component {
     });
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.currentPageIndex !== this.props.currentPageIndex && nextProps.currentPageIndex !== 1) {
+    if (nextProps.currentPageIndex !== this.props.currentPageIndex
+      && nextProps.currentPageIndex !== 1
+      && this._navigator) {
       this._navigator.popToTop();
     }
   }
@@ -65,7 +67,7 @@ class ContactsComponent extends Component {
       );
     }
     return (
-      <LinearGradient colors={['#F7F7F7', '#D7D7D7']} style={styles.container}>
+      <View style={styles.container}>
         <Navigator
           ref={(nav) => { this._navigator = nav; }}
           initialRoute={routes[0]}
@@ -152,7 +154,7 @@ class ContactsComponent extends Component {
           configureScene={() =>
             Navigator.SceneConfigs.PushFromRight}
         />
-      </LinearGradient>
+      </View>
     );
   }
 }
